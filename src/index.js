@@ -35,6 +35,5 @@ async function bootstrap() {
 
     console.log(`🚀 Server ready at http://localhost:3000/`);
 }
-
 bootstrap().catch(error => console.error(error));
 
