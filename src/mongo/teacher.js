@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 
-const studentSchema = new mongoose.Schema({
+const teacherSchema = new mongoose.Schema({
     username: String,
     email: String,
     password: String,
 });
 
-studentSchema.methods.toResponse = function toResponse() {
+teacherSchema.methods.toResponse = function toResponse() {
     return {
         id: this._id,
         username: this.username,
@@ -14,6 +14,4 @@ studentSchema.methods.toResponse = function toResponse() {
     };
 };
 
-export const Student = mongoose.model('Student', studentSchema);
-
-
+export const Teacher = mongoose.model('Teacher', teacherSchema);

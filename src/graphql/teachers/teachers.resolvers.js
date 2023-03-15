@@ -1,4 +1,4 @@
-import { TeachersService } from "./teacher.service";
+import { TeachersService } from "./teachers.service";
 
 const service = new TeachersService();
 
