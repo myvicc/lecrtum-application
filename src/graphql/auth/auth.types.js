@@ -1,8 +1,20 @@
 const Auth = `
   type Mutation {
-    signUpStudent(body: SignupStudentBody): Student,
+    signUpStudent(body: SignupStudentBody): Student
     signUpTeacher(body: SignupTeacherBody): Teacher
+    loginStudent(body: LoginStudentBody): String
+    loginTeacher(body: LoginTeacherBody): String
   }
+  
+  input LoginTeacherBody {
+    email: String!
+    password: String!
+  }  
+  
+  input LoginStudentBody {
+    email: String!
+    password: String!
+  }  
 
   input SignupStudentBody {
     username: String!
@@ -18,3 +30,4 @@ const Auth = `
 `;
 
 export default Auth;
+

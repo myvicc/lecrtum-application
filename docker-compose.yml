@@ -3,10 +3,14 @@ version: "3.3"
 services:
   mongo:
     image: mongo
+    volumes:
+      - data:/opt/mongodb/data
     environment:
       MONGO_INITDB_ROOT_USERNAME: lectrum
       MONGO_INITDB_ROOT_PASSWORD: lectrum
       MONGO_INITDB_DATABASE: lectrum
-
     ports:
       - 27017:27017
+
+volumes:
+  data: {}
