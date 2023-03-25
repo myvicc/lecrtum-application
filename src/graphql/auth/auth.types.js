@@ -5,16 +5,6 @@ const Auth = `
     loginStudent(body: LoginStudentBody): String
     loginTeacher(body: LoginTeacherBody): String
   }
-  
-  input LoginTeacherBody {
-    email: String!
-    password: String!
-  }  
-  
-  input LoginStudentBody {
-    email: String!
-    password: String!
-  }  
 
   input SignupStudentBody {
     username: String!
@@ -24,6 +14,16 @@ const Auth = `
   
   input SignupTeacherBody {
     username: String!
+    email: String!
+    password: String!
+  }
+
+  input LoginStudentBody {
+    email: String!
+    password: String!
+  }
+  
+  input LoginTeacherBody {
     email: String!
     password: String!
   }

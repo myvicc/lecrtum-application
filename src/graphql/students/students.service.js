@@ -1,5 +1,5 @@
-import { ObjectId } from "mongodb"
-import { Student } from "../../mongo";
+import { ObjectId } from 'mongodb';
+import { Student } from '../../mongo';
 
 export class StudentsService {
     async getStudent(id) {
@@ -7,10 +7,10 @@ export class StudentsService {
     }
 
     async updateUsername(id, username) {
-        const student = await Student.findById(new ObjectId(id));
+        const student = await Student.findOneById(new ObjectId(id));
 
         if (!student) {
-            throw new Error("student is not finded");
+            throw new Error('Студент не знайдений');
         }
 
         student.username = username;
@@ -20,3 +20,4 @@ export class StudentsService {
         return student.toResponse();
     }
 }
+

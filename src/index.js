@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
@@ -7,19 +10,45 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import schema from './graphql';
-import * as dotenv from 'dotenv';
-import jwt from 'jsonwebtoken';
-
-dotenv.config();
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
+import { extractUserFromToken } from './utilities';
 
 async function bootstrap() {
     const app = express();
 
     const httpServer = http.createServer(app);
 
+    const wsServer = new WebSocketServer({
+        server: httpServer,
+        path: '/graphqli'
+    });
+
+    const serverCleanUp = useServer(
+        {
+            schema,
+            context: (ctx) => {
+                const user = extractUserFromToken(ctx.connectionParams.Authorization);
+
+                return { user };
+            }
+        },
+        wsServer);
+
     const server = new ApolloServer({
         schema,
-        plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+        plugins: [
+            ApolloServerPluginDrainHttpServer({ httpServer }),
+            {
+                async serverWillStart() {
+                    return {
+                        async drainServer() {
+                            await serverCleanUp.dispose();
+                        }
+                    }
+                }
+            }
+        ],
     });
 
     await server.start();
@@ -32,21 +61,11 @@ async function bootstrap() {
         bodyParser.json(),
         expressMiddleware(server, {
             context: async ({ req }) => {
-                const context = {};
-                const { authorization } = req.headers;
+                const user = extractUserFromToken(req.headers.authorization);
 
-                if (authorization) {
-                    const token = authorization.split(' ')[1];
-
-                    if (token) {
-                        const data = jwt.verify(token, process.env.JWT_SECRET);
-                        context.user = data;
-                    }
-                }
-
-                return context;
+                return { user };
             },
-        })
+        }),
     );
 
     await new Promise((resolve) => httpServer.listen({ port: process.env.PORT }, resolve));
@@ -55,4 +74,3 @@ async function bootstrap() {
 }
 
 bootstrap().catch(error => console.error(error));
-

@@ -1,23 +1,31 @@
 const Common = `
+  type Review {
+    id: String!
+    date: String!
+    text: String!
+    studentId: String!
+    teacherId: String!
+  }
+
   type Student {
     id: String!
     username: String!
     email: String!
   }
-  
+
   type Teacher {
     id: String!
     username: String!
     email: String!
-    blockedSlots: [BlockedSlots]
+    blockedSlots: [TimeSlot]
   }
-  
-  type BlockedSlots {
-    date: String!,
-    timeStart: Int!,
+
+  type TimeSlot {
+    date: String!
+    timeStart: Int!
     timeEnd: Int!
-    }
-  
+  }
+
   type Lesson {
     id: String!
     date: String!
@@ -26,7 +34,7 @@ const Common = `
     teacherId: String!
     studentId: String!
   }
-  
 `;
 
 export default Common;
+

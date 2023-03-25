@@ -1,18 +1,23 @@
 const Teacher = `
   type Query {
     teacher(id: String!): Teacher
+    teachersLessons(id: String!): [Lesson]
+    
   }
-  
+
   type Mutation {
-    updateTeachername(username: String!): Teacher,
-    setBlockedSlots(body: SetBlockedSlotsBody!): Teacher
+    updateTeacherUsername(username: String!): Teacher
+    addBlockedSlot(body: AddBlockedSlotBody!): Teacher
+  }
+
+  input AddBlockedSlotBody {
+    date: String!
+    timeStart: Int!
+    timeEnd: Int!
   }
   
-  input SetBlockedSlotsBody {
-    date: String!,
-    timeStart: String!,
-    timeEnd: String!
-  }
 `;
 
 export default Teacher;
+
+
