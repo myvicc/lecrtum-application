@@ -10,17 +10,11 @@ const service = new TeachersService();
 export default {
     Query: {
         teacher: (parent, { id }) => service.getTeacher(id),
-        teachersLessons: async (parent, { id }) => {
-            const teacher = await Teacher.findById(new ObjectId(id));
-            if (!teacher) {
-                throw new Error('Викладач не знайдений');
+        getLessons: (parent, variables, { user }) => {
+            if (user.type !== 'TEACHER') {
+                throw new Error('Unauthorized');
             }
-            const existingLessons = await Lesson.find({teacherId: id});
-            if (!existingLessons) {
-                throw new Error('У викладача не має уроків');
-            }
-            return existingLessons;
-
+            return service.getLessons(user.id);
         }
     },
     Mutation: {

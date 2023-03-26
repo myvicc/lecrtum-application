@@ -1,7 +1,7 @@
 const Teacher = `
   type Query {
     teacher(id: String!): Teacher
-    teachersLessons(id: String!): [Lesson]
+    getLessons: [Lesson]
     
   }
 

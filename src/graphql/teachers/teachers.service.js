@@ -21,6 +21,16 @@ export class TeachersService {
         return teacher.toResponse();
     }
 
+    async getLessons(teacherId) {
+        const teacher = await Teacher.findById(new ObjectId(teacherId));
+        if (!teacher) {
+            throw new Error('Викладач не знайдений');
+        }
+
+        const existingLessons = await Lesson.find({ teacherId });
+        return existingLessons.map((lesson) => lesson.toResponse());
+    }
+
     async addBlockedSlot(id, body) {
         if (!isTimeSlotValid(body)) {
             throw new Error('Невірний час для блокування');
@@ -68,5 +78,7 @@ export class TeachersService {
 
         return teacher.toResponse();
     }
+
+
 }
 
