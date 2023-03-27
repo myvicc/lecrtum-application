@@ -7,7 +7,7 @@ export default {
         student: (parent, { id }) => service.getStudent(id),
     },
     Mutation: {
-        updateUsername: (parent, { username }, { user }) => {
+        updateStudentUsername: (parent, { username }, { user }) => {
             if (user.type !== 'STUDENT') {
                 throw new Error('Unauthorized');
             }
@@ -16,4 +16,5 @@ export default {
         }
     }
 };
+
 

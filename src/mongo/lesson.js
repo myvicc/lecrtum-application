@@ -15,8 +15,10 @@ lessonSchema.methods.toResponse = function toResponse() {
         timeStart: this.timeStart,
         timeEnd: this.timeEnd,
         studentId: this.studentId,
-        teacherId: this.teacherId
-    }
+        teacherId: this.teacherId,
+    };
 };
 
 export const Lesson = mongoose.model('Lesson', lessonSchema);
+
+

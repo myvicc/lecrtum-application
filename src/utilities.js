@@ -1,12 +1,26 @@
-import {Teacher} from './mongo';
-import {ObjectId} from 'mongodb';
+import jwt from 'jsonwebtoken';
+
+export const extractUserFromToken = (tokenLocation) => {
+    if (tokenLocation) {
+        const token = tokenLocation.split(' ')[1];
+
+        let user;
+
+        if (token) {
+            const data = jwt.verify(token, process.env.JWT_SECRET);
+            user = data;
+        }
+
+        return user;
+    }
+}
 
 export const passwordIsCorrect = (password) => {
     if (password.length < 8) {
-        throw new Error("Пароль дуже короткий");
+        throw new Error('Пароль дуже короткий');
     }
 
-    const regex = new RegExp(/^(?=.*[a-z])(?=.*\d)[a-z\d]{8,}$/gi);
+    const regex = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/gi);
 
     return regex.test(password);
 };
@@ -17,25 +31,20 @@ export const checkEmail = (map, email) => {
     }
 };
 
-export const teacherIsBusy = async (date, timeStart, timeEnd, teacherId) => {
-    const currentTeacher = await Teacher.findById(new ObjectId(teacherId));
+export const isTimeSlotValid = ({ date, timeStart, timeEnd }) => {
+    if (timeStart < 16 || timeEnd > 20) {
+        return false;
+    }
 
-    if (!currentTeacher) {
-        throw new Error("teacher not found");
+    const slotDuration = timeEnd - timeStart;
+
+    if (slotDuration > 1 || slotDuration < 0) {
+        return false;
     }
-    const existingSlot = currentTeacher.blockedSlots.find((slot) => slot.date.toISOString() === date.toISOString()
-        && slot.timeStart === timeStart && slot.timeEnd === timeEnd);
-    if (existingSlot) {
-        throw new Error('teacher is busy')
+
+    if (new Date(date) < new Date()) {
+        return false;
     }
+
+    return true;
 }
-export const checkOfLesson = (timeStart, timeEnd) => {
-    if (!(+timeStart === 16 || +timeStart === 17 || +timeStart === 18 || +timeStart ===19)) {
-
-        throw new Error("Lesson should start from 16 till 19 and at the beginning of hour");
-    }
-    if (+timeEnd - +timeStart !== 1) {
-        throw new Error("Lesson should last 1 hour");
-    }
-}
-

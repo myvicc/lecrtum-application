@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
 import { Student, Teacher } from '../../mongo';
 import { passwordIsCorrect } from '../../utilities';
-import jwt from 'jsonwebtoken';
 
 export class AuthService {
     async signupStudent(body) {
@@ -49,35 +50,35 @@ export class AuthService {
     }
 
     async loginStudent(body) {
-        const student = await Student.findOne({email: body.email});
+        const student = await Student.findOne({ email: body.email });
 
-        if (!student) {
+        if(!student) {
             throw new Error('Введені дані невірні');
         }
 
         const isPasswordValid = await bcrypt.compare(body.password, student.password);
 
-        if (!isPasswordValid) {
+        if(!isPasswordValid) {
             throw new Error('Введені дані невірні');
         }
 
-        return jwt.sign({id: student.id, type: 'STUDENT'}, process.env.JWT_SECRET);
+        return jwt.sign({ id: student.id, type: 'STUDENT' }, process.env.JWT_SECRET);
     }
 
     async loginTeacher(body) {
-        const teacher = await Teacher.findOne({email: body.email});
+        const teacher = await Teacher.findOne({ email: body.email });
 
-        if (!teacher) {
+        if(!teacher) {
             throw new Error('Введені дані невірні');
         }
 
         const isPasswordValid = await bcrypt.compare(body.password, teacher.password);
 
-        if (!isPasswordValid) {
+        if(!isPasswordValid) {
             throw new Error('Введені дані невірні');
         }
 
-        return jwt.sign({id: teacher.id, type: 'TEACHER'}, process.env.JWT_SECRET);
+        return jwt.sign({ id: teacher.id, type: 'TEACHER' }, process.env.JWT_SECRET);
     }
 }
 
