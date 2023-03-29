@@ -1,10 +1,13 @@
+import { scalarsDef } from './scalars';
+
 const Common = `
-  type Review {
+  ${scalarsDef}
+  
+  type File {
     id: String!
-    date: String!
-    text: String!
-    studentId: String!
-    teacherId: String!
+    fileName: String!
+    path: String!
+    mimeType: String!
   }
 
   type Student {
@@ -31,6 +34,14 @@ const Common = `
     date: String!
     timeStart: Int!
     timeEnd: Int!
+    teacherId: String!
+    studentId: String!
+  }
+
+  type Review {
+    id: String!
+    date: String!
+    text: String!
     teacherId: String!
     studentId: String!
   }

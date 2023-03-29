@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
+import { graphqlUploadExpress } from 'graphql-upload';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
@@ -9,9 +10,10 @@ import http from 'http';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
-import schema from './graphql';
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
+
+import schema from './graphql';
 import { extractUserFromToken } from './utilities';
 
 async function bootstrap() {
@@ -21,39 +23,43 @@ async function bootstrap() {
 
     const wsServer = new WebSocketServer({
         server: httpServer,
-        path: '/graphqli'
+        path: '/graphqli',
     });
 
-    const serverCleanUp = useServer(
+    const serverCleanup = useServer(
         {
             schema,
-            context: (ctx) => {
+            context: async (ctx) => {
                 const user = extractUserFromToken(ctx.connectionParams.Authorization);
 
                 return { user };
-            }
+            },
         },
-        wsServer);
+        wsServer
+    );
 
     const server = new ApolloServer({
         schema,
+        csrfPrevention: true,
         plugins: [
             ApolloServerPluginDrainHttpServer({ httpServer }),
             {
                 async serverWillStart() {
                     return {
                         async drainServer() {
-                            await serverCleanUp.dispose();
-                        }
-                    }
-                }
-            }
+                            await serverCleanup.dispose();
+                        },
+                    };
+                },
+            },
         ],
     });
 
     await server.start();
 
     await mongoose.connect(process.env.MONGODB_URL);
+
+    app.use(graphqlUploadExpress());
 
     app.use(
         '/',
@@ -65,12 +71,14 @@ async function bootstrap() {
 
                 return { user };
             },
-        }),
+        })
     );
 
-    await new Promise((resolve) => httpServer.listen({ port: process.env.PORT }, resolve));
+    await new Promise((resolve) =>
+        httpServer.listen({ port: process.env.PORT }, resolve)
+    );
 
     console.log(`🚀 Server ready at http://localhost:${process.env.PORT}/`);
 }
 
-bootstrap().catch(error => console.error(error));
+bootstrap().catch((error) => console.error(error));

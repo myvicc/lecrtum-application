@@ -1,10 +1,13 @@
-import { ObjectId } from 'mongodb';
-
-import { Lesson, Teacher } from '../../mongo';
+import { Lesson } from '../../mongo';
+import pubsub from '../../pubsub';
 import {isTimeSlotValid } from '../../utilities';
-import pubsub from '../../../pubsub';
+import { TeachersService } from '../teachers/teachers.service';
 
 export class LessonsService {
+    constructor() {
+        this.teacherService = new TeachersService();
+    }
+
     async createLesson(studentId, body) {
         const { date, timeStart, timeEnd, teacherId } = body;
 
@@ -25,23 +28,8 @@ export class LessonsService {
             throw new Error('У викладача вже є урок у цей час');
         }
 
-        // Перевіряємо чи є такий викладач
-        const teacher = await Teacher.findById(new ObjectId(teacherId));
-
-        if (!teacher) {
-            throw new Error('Викладач не знайдений');
-        }
-
-        // Перевіряємо чи заблоковано цей слот у викладача
-        const blockedSlot = teacher.blockedSlots.find(
-            (slot) =>
-                slot.date === new Date(date) &&
-                slot.timeStart === timeStart &&
-                slot.timeEnd === timeEnd
-        );
-
-        if (blockedSlot) {
-            throw new Error('Викладач у даний слот недоступний');
+        if (!await this.teacherService.checkIfTeacherIsAvailable(teacherId, body)) {
+            throw new Error('Викладач у цей час зайнятий');
         }
 
         const lesson = new Lesson({
@@ -54,9 +42,25 @@ export class LessonsService {
 
         await lesson.save();
 
-        await pubsub.publish('NEW_LESSON', {createLesson: lesson.toResponse()});
+        await pubsub.publish('NEW_LESSON', { newLesson: lesson.toResponse() });
 
         return lesson.toResponse();
+    }
+
+    async getTeachersLesson(teacherId) {
+        const now = new Date();
+
+        const lessons = await Lesson.find({
+            teacherId,
+            date: {
+                $gte: now,
+            },
+            timeStart: {
+                $gte: now.getHours(),
+            }
+        });
+
+        return lessons.map(lesson => lesson.toResponse());
     }
 }
 

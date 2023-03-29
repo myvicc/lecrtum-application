@@ -1,6 +1,14 @@
 const Lesson = `
+  type Query {
+    teacherLessons: [Lesson]
+  }
+
   type Mutation {
     createLesson(body: CreateLessonBody!): Lesson
+  }
+
+  type Subscription {
+    newLesson: Lesson
   }
 
   input CreateLessonBody {
@@ -9,10 +17,6 @@ const Lesson = `
     timeEnd: Int!
     teacherId: String!
   }
-  
-  type Subscription {
-        createLesson(body: CreateLessonBody!): Lesson
-    }
 `;
 
 export default Lesson;
