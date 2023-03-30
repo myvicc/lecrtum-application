@@ -1,10 +1,20 @@
+import { withFilter } from 'graphql-subscriptions';
+
+import pubsub from '../../pubsub';
 import { LessonsService } from './lessons.service';
-import {withFilter} from 'graphql-subscriptions';
-import pubsub from '../../../pubsub';
 
 const service = new LessonsService();
 
 export default {
+    Query: {
+        teacherLessons: (_parent, _variables, { user }) => {
+            if (user.type !== 'TEACHER') {
+                throw new Error('Unauthorized');
+            }
+
+            return service.getTeachersLesson(user.id);
+        },
+    },
     Mutation: {
         createLesson: (parent, { body }, { user }) => {
             if (user.type !== 'STUDENT') {
@@ -15,21 +25,22 @@ export default {
         }
     },
     Subscription: {
-        createLesson: {
+        newLesson: {
             subscribe: withFilter(
-                (_parent, _variables, { user }) =>  {
+                (_parent, _variables, { user }) => {
                     if (user.type !== 'TEACHER') {
-                        throw new Error('This subscription only for teacher');
+                        throw new Error('Unauthorized');
                     }
-                    return pubsub.asyncIterator('NEW_LESSON');
+
+                    return pubsub.asyncIterator(['NEW_LESSON'])
                 },
-                (payload, variables, { user }) => {
+                (payload, _variables, { user }) => {
                     return (
-                        payload.createLesson.teacherId.toString() === user.id
-                    )
-                }
-            )
-        }
-    }
+                        payload.newLesson.teacherId.toString() === user.id
+                    );
+                },
+            ),
+        },
+    },
 };
 

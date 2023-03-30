@@ -21,3 +21,4 @@ teacherSchema.methods.toResponse = function toResponse() {
 };
 
 export const Teacher = mongoose.model('Teacher', teacherSchema);
+

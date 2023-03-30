@@ -1,18 +1,66 @@
 import { ObjectId } from 'mongodb';
-import { Lesson, Teacher } from '../../mongo';
-import { isTimeSlotValid } from '../../utilities';
+import { Lesson, Teacher, File } from '../../mongo';
+import {fileTypeIsCorrect, isTimeSlotValid, storeLocally} from '../../utilities';
+import {ALLOWED_TYPES} from '../../constants/allowed.types';
+import { unlinkSync } from 'fs';
 
 export class TeachersService {
+
+    async uploadFile(teacherId, uploadFile) {
+        await this.findTeacherById(teacherId);
+
+        fileTypeIsCorrect(uploadFile, ALLOWED_TYPES.TEACHER_ALLOWED_FILES);
+
+        const { fileName, path, mimeType } = await storeLocally(uploadFile);
+
+        const file = new File({
+            fileName,
+            mimeType,
+            path,
+            teacherId
+        });
+
+        await file.save();
+
+        return file.toResponse();
+    }
+
+    async deleteFile(teacherId, fileId) {
+        await this.findTeacherById(teacherId);
+
+        const file = await File.findById(new ObjectId(fileId));
+
+        if (!file) {
+            throw new Error('file does not exsist');
+        }
+        unlinkSync(file.path);
+
+        await file.deleteOne();
+
+        return "file was deleted";
+    }
+
+    async getUploadFiles(teacherId, fileName) {
+        await this.findTeacherById(teacherId);
+
+        const params = {
+            teacherId: teacherId,
+        };
+
+        if (fileName) {
+            params.fileName = { $regex: new RegExp(fileName, 'gi') };
+        }
+        const files = await File.find(params);
+
+        return files.map((file) => file.toResponse());
+    }
+
     async getTeacher(id) {
-        return Teacher.findById(new ObjectId(id));
+        return this.findTeacherById(id);
     }
 
     async updateUsername(id, username) {
-        const teacher = await Teacher.findById(new ObjectId(id));
-
-        if (!teacher) {
-            throw new Error('Викладач не знайдений');
-        }
+        const teacher = await this.findTeacherById(id);
 
         teacher.username = username;
 
@@ -21,11 +69,9 @@ export class TeachersService {
         return teacher.toResponse();
     }
 
+
     async getLessons(teacherId) {
-        const teacher = await Teacher.findById(new ObjectId(teacherId));
-        if (!teacher) {
-            throw new Error('Викладач не знайдений');
-        }
+        const teacher = await this.findTeacherById(teacherId);
 
         const existingLessons = await Lesson.find({ teacherId });
         return existingLessons.map((lesson) => lesson.toResponse());
@@ -38,11 +84,7 @@ export class TeachersService {
 
         const { date, timeStart, timeEnd } = body;
 
-        const teacher = await Teacher.findById(new ObjectId(id));
-
-        if (!teacher) {
-            throw new Error('Викладач не знайдений');
-        }
+        const teacher = await this.findTeacherById(id);
 
         const newSlot = {
             date: new Date(date),
@@ -79,6 +121,29 @@ export class TeachersService {
         return teacher.toResponse();
     }
 
+    async checkIfTeacherIsAvailable(teacherId, { date, timeStart, timeEnd }) {
+        // Перевіряємо чи є такий викладач
+        const teacher = await this.findTeacherById(teacherId);
 
+        // Перевіряємо чи заблоковано цей слот у викладача
+        const blockedSlot = teacher.blockedSlots.find(
+            (slot) =>
+                slot.date === new Date(date) &&
+                slot.timeStart === timeStart &&
+                slot.timeEnd === timeEnd
+        );
+
+        return !blockedSlot;
+    }
+
+    async findTeacherById(id) {
+        const teacher = await Teacher.findById(new ObjectId(id));
+
+        if (!teacher) {
+            throw new Error('Викладач не знайдений');
+        }
+
+        return teacher;
+    }
 }
 

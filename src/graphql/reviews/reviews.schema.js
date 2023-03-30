@@ -1,11 +1,13 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import CommonTypes from '../common.types';
-import ReviewsResolvers from './reviews.resolvers';
-import reviewsType from './reviews.type';
+import commonTypes from '../common.types';
+import reviewsTypes from './reviews.types';
+import reviewsResolvers from './reviews.resolvers';
 
-const reviewSchema = makeExecutableSchema({
-    typeDefs: [reviewsType, CommonTypes],
-    resolvers: ReviewsResolvers
+const reviewsSchema = makeExecutableSchema({
+    typeDefs: [reviewsTypes, commonTypes],
+    resolvers: reviewsResolvers,
 });
 
-export default reviewSchema;
+export default reviewsSchema;
+
+

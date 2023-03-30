@@ -1,12 +1,13 @@
-import { ReviewsService } from './reviews.service';
-import pubsub from '../../../pubsub';
 import { withFilter } from 'graphql-subscriptions';
+
+import pubsub from '../../pubsub';
+import { ReviewsService } from './reviews.service';
 
 const service = new ReviewsService();
 
 export default {
     Mutation: {
-        addReview: (parent, {body}, {user}) => {
+        addReview: (parent, { body }, { user }) => {
             if (user.type !== 'STUDENT') {
                 throw new Error('Unauthorized');
             }
@@ -17,19 +18,20 @@ export default {
     Subscription: {
         reviewAdded: {
             subscribe: withFilter(
-                (_parent, _variables, { user }) =>  {
+                (_parent, _variables, { user }) => {
                     if (!user) {
                         throw new Error('Unauthorized');
                     }
 
-                    return pubsub.asyncIterator('NEW_REVIEW');
+                    return pubsub.asyncIterator(['NEW_REVIEW'])
                 },
                 (payload, variables) => {
                     return (
                         payload.reviewAdded.teacherId.toString() === variables.teacherId
-                    )
-                }
-            )
-        }
+                    );
+                },
+            ),
+        },
     }
-}
+};
+

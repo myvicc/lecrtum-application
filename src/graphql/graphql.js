@@ -73,7 +73,6 @@ export const resolvers = {
                 throw new Error("Password must be more than 8 symbols (only numbers and letters)");
             }
 
-            console.log(students);
             students.set(student.id, student);
             return student;
         },
