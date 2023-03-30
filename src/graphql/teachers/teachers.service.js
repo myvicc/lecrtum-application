@@ -35,7 +35,7 @@ export class TeachersService {
         }
         unlinkSync(file.path);
 
-        file.deleteOne();
+        await file.deleteOne();
 
         return "file was deleted";
     }
@@ -48,8 +48,7 @@ export class TeachersService {
         };
 
         if (fileName) {
-            params.fileName = {$regex: `${fileName}`};
-            console.log(params);
+            params.fileName = { $regex: new RegExp(fileName, 'gi') };
         }
         const files = await File.find(params);
 
