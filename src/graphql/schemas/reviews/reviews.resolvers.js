@@ -1,19 +1,13 @@
 import { withFilter } from 'graphql-subscriptions';
 
-import pubsub from '../../pubsub';
+import pubsub from '../../../pubsub';
 import { ReviewsService } from './reviews.service';
 
 const service = new ReviewsService();
 
 export default {
     Mutation: {
-        addReview: (parent, { body }, { user }) => {
-            if (user.type !== 'STUDENT') {
-                throw new Error('Unauthorized');
-            }
-
-            return service.addReview(user.id, body);
-        }
+        addReview: (parent, { body }, { user }) => service.addReview(user.id, body)
     },
     Subscription: {
         reviewAdded: {

@@ -40,7 +40,6 @@ async function bootstrap() {
 
     const server = new ApolloServer({
         schema,
-        csrfPrevention: true,
         plugins: [
             ApolloServerPluginDrainHttpServer({ httpServer }),
             {
@@ -82,3 +81,4 @@ async function bootstrap() {
 }
 
 bootstrap().catch((error) => console.error(error));
+

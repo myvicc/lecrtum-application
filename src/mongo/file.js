@@ -4,7 +4,8 @@ const fileSchema = new mongoose.Schema({
     fileName: String,
     path: String,
     mimeType: String,
-    teacherId: mongoose.SchemaTypes.ObjectId
+    teacherId: mongoose.SchemaTypes.ObjectId,
+    studentsAccess: []
 });
 
 fileSchema.methods.toResponse = function () {
@@ -12,7 +13,8 @@ fileSchema.methods.toResponse = function () {
         id: this._id,
         fileName: this.fileName,
         path: this.path,
-        mimeType: this.mimeType
+        mimeType: this.mimeType,
+        studentsAccess: this.studentsAccess
     };
 };
 

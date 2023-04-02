@@ -1,14 +1,10 @@
 import { scalarsDef } from './scalars';
+import {directivesDef} from './directives';
 
 const Common = `
   ${scalarsDef}
   
-  type File {
-    id: String!
-    fileName: String!
-    path: String!
-    mimeType: String!
-  }
+  ${directivesDef}
 
   type Student {
     id: String!
@@ -44,6 +40,14 @@ const Common = `
     text: String!
     teacherId: String!
     studentId: String!
+  }
+
+  type File {
+    id: String!
+    fileName: String!
+    path: String!
+    mimeType: String!
+    studentsAccess: String!
   }
 `;
 

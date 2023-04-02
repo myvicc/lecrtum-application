@@ -1,60 +1,8 @@
 import { ObjectId } from 'mongodb';
-import { Lesson, Teacher, File } from '../../mongo';
-import {fileTypeIsCorrect, isTimeSlotValid, storeLocally} from '../../utilities';
-import {ALLOWED_TYPES} from '../../constants/allowed.types';
-import { unlinkSync } from 'fs';
+import { Lesson, Teacher, File } from '../../../mongo';
+import { isTimeSlotValid } from '../../../utilities';
 
 export class TeachersService {
-
-    async uploadFile(teacherId, uploadFile) {
-        await this.findTeacherById(teacherId);
-
-        fileTypeIsCorrect(uploadFile, ALLOWED_TYPES.TEACHER_ALLOWED_FILES);
-
-        const { fileName, path, mimeType } = await storeLocally(uploadFile);
-
-        const file = new File({
-            fileName,
-            mimeType,
-            path,
-            teacherId
-        });
-
-        await file.save();
-
-        return file.toResponse();
-    }
-
-    async deleteFile(teacherId, fileId) {
-        await this.findTeacherById(teacherId);
-
-        const file = await File.findById(new ObjectId(fileId));
-
-        if (!file) {
-            throw new Error('file does not exsist');
-        }
-        unlinkSync(file.path);
-
-        await file.deleteOne();
-
-        return "file was deleted";
-    }
-
-    async getUploadFiles(teacherId, fileName) {
-        await this.findTeacherById(teacherId);
-
-        const params = {
-            teacherId: teacherId,
-        };
-
-        if (fileName) {
-            params.fileName = { $regex: new RegExp(fileName, 'gi') };
-        }
-        const files = await File.find(params);
-
-        return files.map((file) => file.toResponse());
-    }
-
     async getTeacher(id) {
         return this.findTeacherById(id);
     }
@@ -67,14 +15,6 @@ export class TeachersService {
         await teacher.save();
 
         return teacher.toResponse();
-    }
-
-
-    async getLessons(teacherId) {
-        const teacher = await this.findTeacherById(teacherId);
-
-        const existingLessons = await Lesson.find({ teacherId });
-        return existingLessons.map((lesson) => lesson.toResponse());
     }
 
     async addBlockedSlot(id, body) {
@@ -145,5 +85,23 @@ export class TeachersService {
 
         return teacher;
     }
+    async addStudentsAccessFile(id, body) {
+        const { fileId, studentId } = body;
+        let file = await File.findById(new ObjectId(fileId));
+
+        file.studentsAccess.push(studentId);
+        file.studentsAccess = Array.from(new Set(file.studentsAccess));
+
+        await file.save();
+        return `student with id = ${studentId} was added`;
+    }
+    async removeStudentsAccessFile(id, body) {
+        const { fileId, studentId } = body;
+        const file = await File.findById(new ObjectId(fileId));
+        file.studentsAccess = file.studentsAccess.filter(item => item !== studentId);
+        await file.save();
+        return `student with id = ${studentId} was removed`;
+    }
 }
+
 

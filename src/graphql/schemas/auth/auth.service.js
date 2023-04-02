@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import { Student, Teacher } from '../../mongo';
-import { passwordIsCorrect } from '../../utilities';
+import { Student, Teacher } from '../../../mongo';
+import { passwordIsCorrect } from '../../../utilities';
 
 export class AuthService {
     async signupStudent(body) {

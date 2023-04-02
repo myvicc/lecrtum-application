@@ -1,5 +1,5 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import commonTypes from '../common.types';
+import commonTypes from '../../common.types';
 import authTypes from './auth.types';
 import authResolvers from './auth.resolvers';
 
@@ -9,4 +9,5 @@ const authSchema = makeExecutableSchema({
 });
 
 export default authSchema;
+
 

@@ -15,3 +15,5 @@ studentSchema.methods.toResponse = function toResponse() {
 };
 
 export const Student = mongoose.model('Student', studentSchema);
+
+
