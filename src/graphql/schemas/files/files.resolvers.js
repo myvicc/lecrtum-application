@@ -19,6 +19,8 @@ export default {
     },
     Mutation: {
         uploadFile: async (parent, { file }, { user }) => service.uploadFile(user.id, file),
-        removeFile: async (parent, { fileId }, { user }) => service.removeFile(user.id, fileId)
+        removeFile: async (parent, { fileId }, { user }) => service.removeFile(user.id, fileId),
+        addStudentsAccessFile: (parent, { body }, { user }) => service.addStudentsAccessFile(user.id, body),
+        removeStudentsAccessFile: (parent, { body }, { user }) => service.removeStudentsAccessFile(user.id, body)
     }
 };

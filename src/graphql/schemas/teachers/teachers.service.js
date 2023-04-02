@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { Lesson, Teacher, File } from '../../../mongo';
+import { Lesson, Teacher } from '../../../mongo';
 import { isTimeSlotValid } from '../../../utilities';
 
 export class TeachersService {
@@ -82,26 +82,9 @@ export class TeachersService {
         if (!teacher) {
             throw new Error('Викладач не знайдений');
         }
-
         return teacher;
     }
-    async addStudentsAccessFile(id, body) {
-        const { fileId, studentId } = body;
-        let file = await File.findById(new ObjectId(fileId));
 
-        file.studentsAccess.push(studentId);
-        file.studentsAccess = Array.from(new Set(file.studentsAccess));
-
-        await file.save();
-        return `student with id = ${studentId} was added`;
-    }
-    async removeStudentsAccessFile(id, body) {
-        const { fileId, studentId } = body;
-        const file = await File.findById(new ObjectId(fileId));
-        file.studentsAccess = file.studentsAccess.filter(item => item !== studentId);
-        await file.save();
-        return `student with id = ${studentId} was removed`;
-    }
 }
 
 

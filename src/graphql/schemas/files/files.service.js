@@ -75,4 +75,22 @@ export class FilesService {
 
         return `Файл ${file.fileName} видалено`;
     }
+
+    async addStudentsAccessFile(id, body) {
+        const { fileId, studentId } = body;
+        let file = await File.findById(new ObjectId(fileId));
+
+        file.studentsAccess.push(studentId);
+        file.studentsAccess = Array.from(new Set(file.studentsAccess));
+
+        await file.save();
+        return `student with id = ${studentId} was added`;
+    }
+    async removeStudentsAccessFile(id, body) {
+        const { fileId, studentId } = body;
+        const file = await File.findById(new ObjectId(fileId));
+        file.studentsAccess = file.studentsAccess.filter(item => item !== studentId);
+        await file.save();
+        return `student with id = ${studentId} was removed`;
+    }
 }
