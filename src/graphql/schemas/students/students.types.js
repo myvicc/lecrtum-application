@@ -4,11 +4,13 @@ const Student = `
   }
 
   type Mutation {
-    updateStudentUsername(username: String!): Student
+    updateStudentUsername(username: String!): Student @userType(type: ["STUDENT"])
   }
 `;
 
 export default Student;
+
+
 
 
 

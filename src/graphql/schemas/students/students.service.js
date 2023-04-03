@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { Student } from '../../mongo';
+import { Student } from '../../../mongo';
 
 export class StudentsService {
     async getStudent(id) {

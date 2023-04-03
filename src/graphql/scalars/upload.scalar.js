@@ -5,3 +5,4 @@ export const uploadScalarDef = 'scalar Upload';
 export const uploadScalarResolver = {
     Upload: GraphQLUpload
 }
+

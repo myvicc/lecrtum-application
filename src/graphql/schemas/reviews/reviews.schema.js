@@ -1,5 +1,5 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import commonTypes from '../common.types';
+import commonTypes from '../../common.types';
 import reviewsTypes from './reviews.types';
 import reviewsResolvers from './reviews.resolvers';
 
@@ -9,5 +9,7 @@ const reviewsSchema = makeExecutableSchema({
 });
 
 export default reviewsSchema;
+
+
 
 

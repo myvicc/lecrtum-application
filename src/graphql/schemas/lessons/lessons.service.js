@@ -1,6 +1,6 @@
-import { Lesson } from '../../mongo';
-import pubsub from '../../pubsub';
-import {isTimeSlotValid } from '../../utilities';
+import { Lesson } from '../../../mongo';
+import pubsub from '../../../pubsub';
+import {isTimeSlotValid } from '../../../utilities';
 import { TeachersService } from '../teachers/teachers.service';
 
 export class LessonsService {
@@ -28,7 +28,7 @@ export class LessonsService {
             throw new Error('У викладача вже є урок у цей час');
         }
 
-        if (!await this.teacherService.checkIfTeacherIsAvailable(teacherId, body)) {
+        if (!this.teacherService.checkIfTeacherIsAvailable(teacherId, body)) {
             throw new Error('Викладач у цей час зайнятий');
         }
 

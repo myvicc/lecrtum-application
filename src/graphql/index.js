@@ -1,9 +1,6 @@
 import { makeExecutableSchema, mergeSchemas } from '@graphql-tools/schema';
-import authSchema from './auth/auth.schema';
-import studentsSchema from './students/students.schema';
-import teachersSchema from './teachers/teachers.schema';
-import lessonsSchema from './lessons/lessons.schema';
-import reviewsSchema from './reviews/reviews.schema';
+import {applyDirectives} from './directives';
+import {schemas} from './schemas';
 
 const linkSchema = makeExecutableSchema({
     typeDefs: `
@@ -13,11 +10,11 @@ const linkSchema = makeExecutableSchema({
   `,
 });
 
-const schema = mergeSchemas({
-    schemas: [linkSchema, studentsSchema, teachersSchema, authSchema, lessonsSchema,reviewsSchema],
+let schema = mergeSchemas({
+    schemas: [linkSchema, ...schemas],
 });
 
+schema = applyDirectives(schema);
+
 export default schema;
-
-
 
