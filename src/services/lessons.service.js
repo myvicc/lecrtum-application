@@ -65,5 +65,20 @@ export class LessonsService {
 
         return lessons.map(lesson => lesson.toResponse());
     }
+    async getStudentsLesson(studentId) {
+        const now = new Date();
+
+        const lessons = await Lesson.find({
+            studentId,
+            date: {
+                $gte: now,
+            },
+            timeStart: {
+                $gte: now.getHours(),
+            }
+        });
+
+        return lessons.map(lesson => lesson.toResponse());
+    }
 }
 

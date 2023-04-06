@@ -8,7 +8,7 @@ export class StudentsController {
     async getStudentLessons(request, response) {
         try {
             const { studentId } = request.params;
-            const lessons = await this.lessonService.getStudentsLesson()
+            const lessons = await this.lessonService.getStudentsLesson(studentId);
 
             return response.json(lessons);
         } catch (e) {
