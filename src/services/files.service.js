@@ -1,7 +1,7 @@
-import {TeachersService} from '../teachers/teachers.service';
-import {fileTypeIsCorrect, removeFromS3, storeS3} from '../../../utilities';
-import {ALLOWED_TYPES} from '../../../constants/allowed.types';
-import {File, Student} from '../../../mongo';
+import {TeachersService} from './teachers.service';
+import {fileTypeIsCorrect, removeFromS3, storeS3} from '../utilities';
+import {ALLOWED_TYPES} from '../constants/allowed.types';
+import {File, Student} from '../mongo';
 import {ObjectId} from 'mongodb';
 
 

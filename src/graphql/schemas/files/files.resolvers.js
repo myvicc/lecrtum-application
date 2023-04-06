@@ -1,4 +1,4 @@
-import {FilesService} from './files.service';
+import {FilesService} from '../../../services/files.service';
 import {USER_TYPES} from '../../../constants/user.types';
 
 const service = new FilesService();

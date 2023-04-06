@@ -1,6 +1,6 @@
 const Review = `
   type Mutation {
-    addReview(body: AddReviewBody!): Review @userType(type: ["STUDENT"])
+    addReview(body: AddReviewBody!): Review @userType(types: ["STUDENT"])
   }
 
   type Subscription {

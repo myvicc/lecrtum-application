@@ -4,6 +4,9 @@ const Auth = `
     signUpTeacher(body: SignupTeacherBody): Teacher
     loginStudent(body: LoginStudentBody): String
     loginTeacher(body: LoginTeacherBody): String
+    logoutStudent: String @userType(types: ["STUDENT"])
+    logoutTeacher: String @userType(types: ["TEACHER"])
+
   }
 
   input SignupStudentBody {

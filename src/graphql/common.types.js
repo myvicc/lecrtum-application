@@ -10,12 +10,14 @@ const Common = `
     id: String!
     username: String!
     email: String!
+    online: Boolean!
   }
 
   type Teacher {
     id: String!
     username: String!
     email: String!
+    online: Boolean!
     blockedSlots: [TimeSlot]
   }
 

@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
-import pubsub from '../../../pubsub';
+import pubsub from '../pubsub';
 
-import { Review, Teacher } from '../../../mongo';
+import { Review, Teacher } from '../mongo';
 
 export class ReviewsService {
     async addReview(studentId, body) {

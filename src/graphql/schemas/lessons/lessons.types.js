@@ -1,14 +1,15 @@
 const Lesson = `
   type Query {
-    teacherLessons: [Lesson] @userType(type: ["TEACHER"])
+    teacherLessons: [Lesson] @userType(types: ["TEACHER"])
+    studentLessons: [Lesson] @userType(types: ["STUDENT"])
   }
 
   type Mutation {
-    createLesson(body: CreateLessonBody!): Lesson @userType(type: ["STUDENT"])
+    createLesson(body: CreateLessonBody!): Lesson @userType(types: ["STUDENT"])
   }
 
   type Subscription {
-    newLesson: Lesson @userType(type: ["TEACHER"])
+    newLesson: Lesson @userType(types: ["TEACHER"])
   }
 
   input CreateLessonBody {

@@ -1,7 +1,8 @@
-import { Lesson } from '../../../mongo';
-import pubsub from '../../../pubsub';
-import {isTimeSlotValid } from '../../../utilities';
-import { TeachersService } from '../teachers/teachers.service';
+import { Lesson } from '../mongo';
+import pubsub from '../pubsub';
+import {isTimeSlotValid } from '../utilities';
+
+import { TeachersService } from './teachers.service';
 
 export class LessonsService {
     constructor() {
@@ -9,12 +10,14 @@ export class LessonsService {
     }
 
     async createLesson(studentId, body) {
+
         const { date, timeStart, timeEnd, teacherId } = body;
 
-        // Перевіряємо чи вірний тайм-слот
+        /* Перевіряємо чи вірний тайм-слот
         if (!isTimeSlotValid({ date, timeStart, timeEnd })) {
             throw new Error('Невірний час для блокування');
         }
+         */
 
         // Перевіряємо чи є урок у викладача в цей час
         const existingLesson = await Lesson.findOne({
@@ -28,7 +31,7 @@ export class LessonsService {
             throw new Error('У викладача вже є урок у цей час');
         }
 
-        if (!this.teacherService.checkIfTeacherIsAvailable(teacherId, body)) {
+        if (!(await this.teacherService.checkIfTeacherIsAvailable(teacherId, body))) {
             throw new Error('Викладач у цей час зайнятий');
         }
 
@@ -52,6 +55,21 @@ export class LessonsService {
 
         const lessons = await Lesson.find({
             teacherId,
+            date: {
+                $gte: now,
+            },
+            timeStart: {
+                $gte: now.getHours(),
+            }
+        });
+
+        return lessons.map(lesson => lesson.toResponse());
+    }
+    async getStudentsLesson(studentId) {
+        const now = new Date();
+
+        const lessons = await Lesson.find({
+            studentId,
             date: {
                 $gte: now,
             },

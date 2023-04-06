@@ -15,6 +15,7 @@ import { useServer } from 'graphql-ws/lib/use/ws';
 
 import schema from './graphql';
 import { extractUserFromToken } from './utilities';
+import {applyRoutes} from './rest';
 
 async function bootstrap() {
     const app = express();
@@ -60,10 +61,11 @@ async function bootstrap() {
 
     app.use(graphqlUploadExpress());
 
+    app.use(bodyParser.json());
+
     app.use(
-        '/',
+        '/graphql',
         cors(),
-        bodyParser.json(),
         expressMiddleware(server, {
             context: async ({ req }) => {
                 const user = extractUserFromToken(req.headers.authorization);
@@ -72,6 +74,8 @@ async function bootstrap() {
             },
         })
     );
+
+    applyRoutes(app);
 
     await new Promise((resolve) =>
         httpServer.listen({ port: process.env.PORT }, resolve)
