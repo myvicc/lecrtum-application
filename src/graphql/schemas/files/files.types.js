@@ -1,13 +1,13 @@
 const File = `
   type Query {
-    getFiles(fileName: String): [File] @userType(type: ["TEACHER", "STUDENT"])
+    getFiles(fileName: String): [File] @userType(types: ["TEACHER", "STUDENT"])
   }
 
   type Mutation {
-    uploadFile(file: Upload!): File @userType(type: ["TEACHER"])
-    removeFile(fileId: String!): String @userType(type: ["TEACHER"])
-    addStudentsAccessFile(body: AddStudentsAccessFile!): String @userType(type: ["TEACHER"])
-    removeStudentsAccessFile(body: RemoveStudentsAccessFile!): String @userType(type: ["TEACHER"])
+    uploadFile(file: Upload!): File @userType(types: ["TEACHER"])
+    removeFile(fileId: String!): String @userType(types: ["TEACHER"])
+    addStudentsAccessFile(body: AddStudentsAccessFile!): String @userType(types: ["TEACHER"])
+    removeStudentsAccessFile(body: RemoveStudentsAccessFile!): String @userType(types: ["TEACHER"])
   }
   input AddStudentsAccessFile {
   fileId: String!

@@ -1,8 +1,9 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import { Student, Teacher } from '../../../mongo';
-import { passwordIsCorrect } from '../../../utilities';
+import { Student, Teacher } from '../mongo';
+import { passwordIsCorrect } from '../utilities';
+import {ObjectId} from 'mongodb';
 
 export class AuthService {
     async signupStudent(body) {
@@ -61,6 +62,8 @@ export class AuthService {
         if(!isPasswordValid) {
             throw new Error('Введені дані невірні');
         }
+        student.online = true;
+        await  student.save();
 
         return jwt.sign({ id: student.id, type: 'STUDENT' }, process.env.JWT_SECRET);
     }
@@ -78,7 +81,38 @@ export class AuthService {
             throw new Error('Введені дані невірні');
         }
 
+        teacher.online = true;
+        await teacher.save();
+
         return jwt.sign({ id: teacher.id, type: 'TEACHER' }, process.env.JWT_SECRET);
     }
+    async logoutStudent(studentId) {
+        const student = await Student.findById(new ObjectId(studentId));
+
+        if (!student) {
+            throw new Error('Студент не знайдений');
+        }
+
+        student.online = false;
+
+        await  student.save();
+
+        return 'Ok';
+    }
+
+    async logoutTeacher(teacherId) {
+        const teacher = await Teacher.findById(new ObjectId(teacherId));
+
+        if (!teacher) {
+            throw new Error('Викладач не знайдений');
+        }
+
+        teacher.online = false;
+
+        await teacher.save();
+
+        return 'Ok';
+    }
+
 }
 

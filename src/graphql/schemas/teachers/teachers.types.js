@@ -4,8 +4,8 @@ const Teacher = `
   }
 
   type Mutation {
-    updateTeacherUsername(username: String!): Teacher @userType(type: ["TEACHER"])
-    addBlockedSlot(body: AddBlockedSlotBody!): Teacher @userType(type: ["TEACHER"])
+    updateTeacherUsername(username: String!): Teacher @userType(types: ["TEACHER"])
+    addBlockedSlot(body: AddBlockedSlotBody!): Teacher @userType(types: ["TEACHER"])
   }
 
   input AddBlockedSlotBody {

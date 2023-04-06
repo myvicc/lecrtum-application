@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
-import { Lesson, Teacher } from '../../../mongo';
-import { isTimeSlotValid } from '../../../utilities';
+import { Lesson, Teacher } from '../mongo';
+import { isTimeSlotValid } from '../utilities';
 
 export class TeachersService {
     async getTeacher(id) {

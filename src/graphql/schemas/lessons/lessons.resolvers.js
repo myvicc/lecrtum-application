@@ -1,7 +1,7 @@
 import { withFilter } from 'graphql-subscriptions';
 
 import pubsub from '../../../pubsub';
-import { LessonsService } from './lessons.service';
+import { LessonsService } from '../../../services/lessons.service';
 
 const service = new LessonsService();
 
@@ -9,6 +9,9 @@ export default {
     Query: {
         teacherLessons: (_parent, _variables, { user }) => {
             return service.getTeachersLesson(user.id);
+        },
+        studentLessons: (_parent, _variables, { user }) => {
+            return service.getStudentsLesson(user.id);
         },
     },
     Mutation: {

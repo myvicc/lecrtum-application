@@ -4,7 +4,7 @@ const Student = `
   }
 
   type Mutation {
-    updateStudentUsername(username: String!): Student @userType(type: ["STUDENT"])
+    updateStudentUsername(username: String!): Student @userType(types: ["STUDENT"])
   }
 `;
 

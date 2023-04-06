@@ -1,7 +1,7 @@
 import { withFilter } from 'graphql-subscriptions';
 
 import pubsub from '../../../pubsub';
-import { ReviewsService } from './reviews.service';
+import { ReviewsService } from '../../../services/reviews.service';
 
 const service = new ReviewsService();
 

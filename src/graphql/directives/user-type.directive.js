@@ -1,7 +1,8 @@
 import { mapSchema, MapperKind, getDirective } from '@graphql-tools/utils';
 import { defaultFieldResolver } from 'graphql';
 
-export const userTypeDirectiveTypeDef = 'directive @userType(type: [String]!) on FIELD_DEFINITION';
+export const userTypeDirectiveTypeDef =
+    'directive @userType(types: [String]!) on FIELD_DEFINITION';
 
 export const userTypeDirectiveTransformer = (schema) =>
     mapSchema(schema, {
@@ -12,17 +13,15 @@ export const userTypeDirectiveTransformer = (schema) =>
                 'userType'
             )?.[0];
 
-
-
             if (userTypeDirective) {
-                const { type } = userTypeDirective;
+                const { types } = userTypeDirective;
 
-                const { resolve = defaultFieldResolver} = fieldConfig;
+                const { resolve = defaultFieldResolver } = fieldConfig;
 
                 fieldConfig.resolve = function (parent, args, context, info) {
                     const { user } = context;
 
-                    if (!type.includes(user.type)) {
+                    if (!types.includes(user.type)) {
                         throw new Error('Unauthorized');
                     }
 
@@ -33,3 +32,4 @@ export const userTypeDirectiveTransformer = (schema) =>
             }
         },
     });
+
